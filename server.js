@@ -4,7 +4,7 @@ let app = express();
 //var app = require('express')();
 let http = require('http').createServer(app);
 let io = require('socket.io')(http);
-
+let dbo = require('./database/conn');
 
 
 
@@ -32,9 +32,21 @@ io.on('connection', (socket) => {
 });
 
 
-http.listen(port,()=>{
-  console.log("Listening on port ", port);
+
+dbo.connect((err) => {
+
+  if(err){
+    console.error(err);
+    process.exit();
+  }
+
+  http.listen(port, () => { 
+    console.log("Listening on port ", port);
+  });
+
 });
 
+
+
 //this is only needed for Cloud foundry 
-//require("cf-deployment-tracker-client").track();
+require("cf-deployment-tracker-client").track();
